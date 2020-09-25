@@ -70,7 +70,7 @@
 
 	<script type="text/javascript">
 		var shipping = '{{order.shipping}}'
-		var total = '{{order.get_cart_total|floatformat:2}}'
+		var total = '{{order.get_cart_total}}'
 
 		if (shipping == 'False'){
 		 	document.getElementById('shipping-info').innerHTML = ''
@@ -130,14 +130,14 @@
 	    	console.log('Shipping Info:', shippingInfo)
 	    	console.log('User Info:', userFormData)
 
-	    	var url = "/process_order/"
+	    	var url = '/process_order/'
 	    	fetch(url, {
 	    		method:'POST',
 	    		headers:{
 	    			'Content-Type':'applicaiton/json',
 	    			'X-CSRFToken':csrftoken,
 	    		}, 
-	    		body:JSON.stringify({'form':userFormData, 'shipping':shippingInfo}),
+	    		body:JSON.stringify({'form':userFormData, 'shipping':shippingInfo})
 	    		
 	    	})
 	    	.then((response) => response.json())
