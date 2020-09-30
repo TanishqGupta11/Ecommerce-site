@@ -31,10 +31,35 @@ def cart(request):
 		items = order.orderitem_set.all()
 		cartItems = order.get_cart_items
 	else:
-		#Create empty cart for now for non-logged in user
+		try:
+			cart = json.loads(request.COOKIES['cart'])
+		except:
+			cart = {}
+		print('Cart:', cart)
 		items = []
 		order = {'get_cart_total':0, 'get_cart_items':0, 'shipping':False}
 		cartItems = order['get_cart_items']
+
+		for i in cart:
+			cartItems += cart[i]["quantity"]
+
+			product = Product.objects.get(id=i)
+			total = (product.price * cart[i]["quantity"])
+			order['get_cart_total'] += total
+			order['get_cart_items'] += cart[i]["quantity"] 
+
+			item = {
+				'product':{
+					'id': product.id,
+					'name': product.name,
+					'price': product.price,
+					'imageURL': product.imageURL,
+					},
+				'quantity':cart[i]["quantity"],
+				'get_total': total,	
+				}
+			items.append(item)
+			
 
 	context = {'items':items, 'order':order, 'cartItems':cartItems}
 	return render(request, 'store/cart.html', context)
@@ -84,9 +109,9 @@ def updateItem(request):
 	return JsonResponse('Item was added', safe=False)
 
 
-from django.views.decorators.csrf import csrf_exempt
+#from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
+#@csrf_exempt
 def processOrder(request):
 
 	transaction_id = datetime.datetime.now().timestamp()
