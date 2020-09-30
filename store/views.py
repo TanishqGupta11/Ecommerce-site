@@ -3,6 +3,7 @@ from django.http import JsonResponse
 import json
 import datetime
 from .models import * 
+ 
 
 def store(request):
 
@@ -83,6 +84,9 @@ def updateItem(request):
 	return JsonResponse('Item was added', safe=False)
 
 
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def processOrder(request):
 
 	transaction_id = datetime.datetime.now().timestamp()
@@ -104,7 +108,7 @@ def processOrder(request):
 			order=order,
 			address=data['shipping']['address'],
 			city=data['shipping']['city'],
-			state=data['shipping']['state'],
+			state=data['shipping']['state'],  
 			zipcode=data['shipping']['zipcode'],
 			)
 	else:
